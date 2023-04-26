@@ -1,18 +1,14 @@
 import React from 'react'
 import { useForm } from '@mantine/form';
-import { TextInput, Text ,Anchor,Title, Button,  createStyles,Group, Box } from '@mantine/core';
+import { TextInput, Text ,Anchor,Title, Button,Group, Box } from '@mantine/core';
+import { LoginAuth }  from '../hooks/useLogin'; 
+import {useIsAuthenticated} from 'react-auth-kit';
 import { useSignIn } from 'react-auth-kit'
-import axios from 'axios'
-import { Link } from 'react-router-dom'
-const useStyles = createStyles((theme) => ({
-  title: {
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`
-  }
-}))
-export const Login = (props) => {
-  const apiUrl ='http://localhost:9999/api/users/login'
-  const signIn = useSignIn()
-  const { classes } = useStyles()
+import { redirect } from 'react-router-dom';
+export const Login = (props) => 
+{
+   const signIn = useSignIn() 
+   const iSAuth = useIsAuthenticated()
     const form = useForm({
         initialValues: {
          
@@ -20,48 +16,34 @@ export const Login = (props) => {
           password: ''
         },
       });
-
+    
      
      const handleLogin=(values)=>{
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'JWT fefege...',
-        'Access-Control-Allow-Origin' :'*'
-      }
-  
+     
+       const response  = LoginAuth('/users/login' , values);;
+       response.then((res)=>{
+         if(res.status === 200){      
+             if(signIn(
+                 {
+                     token: res.data.token,
+                     expiresIn:300000,
+                     tokenType: "Bearer",
+                     authState: res.data.authUserState,
+                     
+                 }
+             )){ 
+              
+              return <redirect to='localhost:9999/'  />
+             }else {
+                
+             }
+         }
+           })
 
-      axios.post(apiUrl, values,{
-        headers: headers
-      })
-            .then((res)=>{
-                if(res.status === 200){
-                  console.log(res)
-                    if(signIn(
-                        {
-                            token: res.data.token,
-                            expiresIn:300000,
-                            tokenType: "Bearer",
-                            authState: res.data.authUserState,
-                            //refreshToken: res.data.refreshToken,                    // Only if you are using refreshToken feature
-                           // refreshTokenExpireIn: res.data.refreshTokenExpireIn     // Only if you are using refreshToken feature
-                        }
-                    )){ 
-                      // Only if you are using refreshToken feature
-                        // Redirect or do-something
-                        
-                    }else {
-                        //Throw error
-                    }
-                }
-            })
-         return values
      }
       return (
-        <>
-          
-               
-      
-        <Box maw={320} mx="auto" mt='4'
+
+        <>{!iSAuth() && <Box maw={320} mx="auto" mt='4'
         sx={(theme) => ({
             display: 'block',
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -104,7 +86,8 @@ export const Login = (props) => {
             </Button>
           </Group>
       </Box>
-      </>
+       }
+        </>
         )
 
  }
