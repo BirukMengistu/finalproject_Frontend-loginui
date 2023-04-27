@@ -1,8 +1,7 @@
 import { 
   BrowserRouter as Router,
   useRoutes} from 'react-router-dom'
-import './App.css';
-/* import Layout from './layout/Layout'; */
+
 import { Login } from './components/Login';
 import Register from './components/Signup'
 function AppRoutes() {

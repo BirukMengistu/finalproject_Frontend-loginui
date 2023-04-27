@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Cookies from 'js-cookie'
+
 import { useForm } from '@mantine/form';
 import { TextInput, Text ,Anchor,Title, Button,Group, Box } from '@mantine/core';
 import { LoginAuth }  from '../hooks/useLogin'; 
 import {useIsAuthenticated} from 'react-auth-kit';
 import { useSignIn } from 'react-auth-kit'
-import { redirect } from 'react-router-dom';
+import { Notifications }  from '@mantine/notifications'
+import {CookieOptions} from '../utils/api'
 export const Login = (props) => 
-{
+{   const options = CookieOptions()
+  const [user, setUser]= useState('')
+   
    const signIn = useSignIn() 
    const iSAuth = useIsAuthenticated()
     const form = useForm({
@@ -16,31 +21,62 @@ export const Login = (props) =>
           password: ''
         },
       });
+      const createCookies =(data)=>{
+         console.log(data)
+        if(data.statusCode === 200){      
+          if(signIn(
+              {
+                  token: data.token,
+                  userId:data.userId,
+                  expiresIn:300000,
+                  tokenType: "Bearer",
+                  authState: data.authUserState,  
+              }
+           
+          ))
+          { 
+         
+           Cookies.set(`userId`, data?.user.userId.toString(), options)
+           Cookies.set(`token`, data?.token, options)
+           // eslint-disable-next-line no-lone-blocks
+          if(data.statusCode === 200){
     
-     
-     const handleLogin=(values)=>{
-     
-       const response  = LoginAuth('/users/login' , values);;
-       response.then((res)=>{
-         if(res.status === 200){      
-             if(signIn(
-                 {
-                     token: res.data.token,
-                     expiresIn:300000,
-                     tokenType: "Bearer",
-                     authState: res.data.authUserState,
-                     
-                 }
-             )){ 
-              
-              return <redirect to='localhost:9999/'  />
-             }else {
-                
-             }
-         }
+           Notifications.show({
+             title: 'Login Successful',
+             message: 'Welcome to Professional Hub',
+             type: 'success'
            })
-
+    
+           setTimeout(()=>{
+             return window.location.replace('http://localhost:3536/')
+           },3500)
+          }
+           
+           
+          }else {
+    
+           Notifications.show({
+             title: 'Login Faild',
+             message: 'Login failed used incorrect email or Password',
+             type: 'error'
+           })
+           return window.location.replace('http://localhost:3535/')
+          }
+      }
+        
+      
+      }
+         
+     
+     const handleLogin= async (values)=>{
+      
+      
+       const response  =  await LoginAuth('/users/login' , values)
+       const userData = response.data
+       createCookies(userData)
      }
+
+   
       return (
 
         <>{!iSAuth() && <Box maw={320} mx="auto" mt='4'
@@ -91,3 +127,10 @@ export const Login = (props) =>
         )
 
  }
+
+
+
+/*  response.then((res)=>{
+  )
+   
+} */

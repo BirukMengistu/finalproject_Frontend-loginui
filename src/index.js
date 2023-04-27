@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from 'react-auth-kit'
 import { Loader, MantineProvider } from '@mantine/core'
-import {BrowserRouter as Router}  from "react-router-dom";
+import {  Notifications } from '@mantine/notifications'
 /* import RouteComponent from './utils/routes'; */
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -32,11 +32,11 @@ root.render(
               primaryColor: 'brand'
             }}
           >
-            
-                <AuthProvider authType = {'localstorage' | 'cookie' }
-                              authName={'_auth'}
-                              
-                              cookieDomain={window.location.hostname}
+        <Notifications position='top-center' limit={3} />
+                <AuthProvider authType = {'Cookies'||'localstorage' }
+                              authName={'_auth'}  
+              
+                              cookieDomain={window.location.hostname && 'http://localhost:3536/'}
                               cookieSecure={window.location.protocol === "https:"}>
 
                       {/*  <RouteComponent />    */}  
@@ -47,7 +47,7 @@ root.render(
                     </Suspense>        
                 
               </AuthProvider>
-   
+          
   </MantineProvider>
   </React.StrictMode>
 );
