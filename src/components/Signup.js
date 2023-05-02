@@ -108,9 +108,9 @@ import {CookieOptions} from '../utils/api'
             Create an Account
           </Title>
           <Stack>
-            <TextInput label="firstName" placeholder="Name" required 
+            <TextInput label="FirstName" placeholder="Name" required 
             {...form.getInputProps('firstName')} />
-            <TextInput label="lastName" placeholder="Name" required 
+            <TextInput label="LastName" placeholder="Name" required 
             {...form.getInputProps('lastName')} />
             <TextInput label="Email" placeholder="you@mantine.dev"
              {...form.getInputProps('email')}
@@ -123,21 +123,23 @@ import {CookieOptions} from '../utils/api'
             />
             <PasswordInput 
             label="Confirm password"
+            placeholder="Your password"
              defaultValue="secret" 
              {...form.getInputProps('password')}/>
           </Stack>
          
          
-          <Button fullWidth mt="xl" 
+          <Button variant="outline" fullWidth mt="xl" 
              onClick={() => handleRegister(form.values)}>
             Sign Up
           </Button>
           <Text color="dimmed" size="sm" align="center" mt={5}>
             Already have an account ?{" "}
             <Anchor
-              href="./login"
+              variant="outline"
+              href="/" 
               size="sm"
-              onClick={(event) => event.preventDefault()}
+              
             >
               Login
             </Anchor>
