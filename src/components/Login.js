@@ -1,8 +1,18 @@
 import React, { useState } from 'react'
 import Cookies from 'js-cookie'
-
+import {
+  TextInput,
+  PasswordInput,
+  Checkbox,
+  Anchor,
+  Paper,
+  Title,
+  Text,
+  Container,
+  Group,
+  Button,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { TextInput, Text ,Anchor,Title, Button,Group, Box } from '@mantine/core';
 import { LoginAuth }  from '../hooks/useLogin'; 
 import {useIsAuthenticated} from 'react-auth-kit';
 import { useSignIn } from 'react-auth-kit'
@@ -22,12 +32,11 @@ export const Login = (props) =>
         },
       });
       const createCookies =(data)=>{
-         console.log(data)
         if(data.statusCode === 200){      
           if(signIn(
               {
                   token: data.token,
-                  userId:data.userId,
+                  userId:data._id,
                   expiresIn:300000,
                   tokenType: "Bearer",
                   authState: data.authUserState,  
@@ -36,11 +45,10 @@ export const Login = (props) =>
           ))
           { 
          
-           Cookies.set(`userId`, data?.user.userId.toString(), options)
+           Cookies.set(`userId`, data?.user._id.toString(), options)
            Cookies.set(`token`, data?.token, options)
            // eslint-disable-next-line no-lone-blocks
           if(data.statusCode === 200){
-    
            Notifications.show({
              title: 'Login Successful',
              message: 'Welcome to Professional Hub',
@@ -69,8 +77,7 @@ export const Login = (props) =>
          
      
      const handleLogin= async (values)=>{
-      
-      
+
        const response  =  await LoginAuth('/users/login' , values)
        const userData = response.data
        createCookies(userData)
@@ -79,7 +86,7 @@ export const Login = (props) =>
    
       return (
 
-        <>{!iSAuth() && <Box maw={320} mx="auto" mt='4'
+        <>{!iSAuth() && <Container size={420} my={40}
         sx={(theme) => ({
             display: 'block',
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -106,13 +113,13 @@ export const Login = (props) =>
                         </Text>
                   </Text>
                  </>
-                   
+         <Paper withBorder shadow="md" p={30} mt={30} radius="md">           
           <TextInput 
           label="Email" 
           placeholder="Name" 
           {...form.getInputProps('email')} />
-          <TextInput mt="md" label="Password" placeholder="Email" {...form.getInputProps('password')} />
-    
+          
+          <PasswordInput label="Password" placeholder="Your password" required mt="md" {...form.getInputProps('password')} />
           <Group position="center" mt="xl">
             <Button variant="outline" onClick={() => handleLogin(form.values)}>
               login
@@ -121,7 +128,8 @@ export const Login = (props) =>
               Register
             </Button>
           </Group>
-      </Box>
+      </Paper>    
+      </Container>
        }
         </>
         )
@@ -130,7 +138,32 @@ export const Login = (props) =>
 
 
 
-/*  response.then((res)=>{
-  )
-   
+
+
+/* export function AuthenticationTitle() {
+  return (
+    <Container size={420} my={40}>
+    
+      <Text color="dimmed" size="sm" align="center" mt={5}>
+        Do not have an account yet?{' '}
+        <Anchor size="sm" component="button">
+          Create account
+        </Anchor>
+      </Text>
+
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <TextInput label="Email" placeholder="you@mantine.dev" required />
+        <PasswordInput label="Password" placeholder="Your password" required mt="md" />
+        <Group position="apart" mt="lg">
+          <Checkbox label="Remember me" />
+          <Anchor component="button" size="sm">
+            Forgot password?
+          </Anchor>
+        </Group>
+        <Button fullWidth mt="xl">
+          Sign in
+        </Button>
+      </Paper>
+    </Container>
+  );
 } */

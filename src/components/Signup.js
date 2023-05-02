@@ -13,9 +13,16 @@ import {
   import {RegAuth}  from '../hooks/useRegister'
   import { useForm } from '@mantine/form';
   import { useSignIn } from 'react-auth-kit'
+  import Cookies from 'js-cookie'
+import { LoginAuth }  from '../hooks/useLogin'; 
+import {useIsAuthenticated} from 'react-auth-kit';
+import { Notifications }  from '@mantine/notifications'
+import {CookieOptions} from '../utils/api'
+
   const Register =() =>{
     const signIn = useSignIn() 
-    
+    const options = CookieOptions()
+  
     const form = useForm({
       initialValues: {
         firstName:'',
@@ -24,31 +31,55 @@ import {
         password: ''
       },
     });
-
-    const handleRegister = (values)=> {
+    const createCookies =(signupData)=>{
+      console.log("signup signupData" ,signupData)
+      if(signupData.statusCode === 201){      
+        if(signIn(
+            {
+                token: signupData.token,
+                userId:signupData._id,
+                expiresIn:300000,
+                tokenType: "Bearer",
+                authState: signupData.authUserState,  
+            }
+         
+        ))
+        { 
+       
+         Cookies.set(`userId`, signupData?.user._id.toString(), options)
+         Cookies.set(`token`, signupData?.token, options)
+         // eslint-disable-next-line no-lone-blocks
+        if(signupData.statusCode === 201){
+         Notifications.show({
+           title: 'User Successful register',
+           message: 'Welcome to Professional Hub',
+           type: 'success'
+         })
+  
+         setTimeout(()=>{
+           return window.location.replace('http://localhost:3536/')
+         },2500)
+        }
+         
+         
+        }else {
+  
+         Notifications.show({
+           title: 'Login Faild',
+           message: 'Login failed used incorrect email or Password',
+           type: 'error'
+         })
+         return window.location.replace('http://localhost:3535/')
+        }
+    }
+      
     
-              const response  = RegAuth('/users/register' , values);
-              response.then((res)=>{
-                if(res.status === 201){
-                  
-                    if(signIn(
-                        {
-                            token: res.data.token,
-                            expiresIn:300000,
-                            tokenType: "Bearer",
-                            authState: res.data.authUserState,
-                            
-                        }
-                    )){ 
-                      // Only if you are using refreshToken feature
-                        // Redirect or do-something
-                        
-                    }else {
-                        //Throw error
-                    }
-                }
-                  })
-
+    }
+    const handleRegister = async (values)=> {
+    
+              const signupResponse  = await RegAuth('/users/register' , values);
+              const signupDignupResponseData = signupResponse.data
+              createCookies(signupDignupResponseData)
     }
     return (
         <Box maw={320} mx="auto" mt='4'

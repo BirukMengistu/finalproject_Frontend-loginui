@@ -11,15 +11,10 @@ export const  LoginAuth = (apiAdd , values) =>{
         'Access-Control-Allow-Origin' :'*'
       }
      
-
-      const response =   axios.post(API_URL+apiAdd, values,{
+      const logResponse =   axios.post(API_URL+apiAdd, values,{
         headers: headers
       }) 
-      return response
-   
-     
-
-    
+      return logResponse 
     
 }
   
