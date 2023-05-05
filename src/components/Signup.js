@@ -6,9 +6,9 @@ import {
     Title,
     Text,
     Anchor,
-   
+    Container,
     Stack,
-    Box
+    
   } from "@mantine/core";
   import {RegAuth}  from '../hooks/useRegister'
   import { useForm } from '@mantine/form';
@@ -82,7 +82,7 @@ import {CookieOptions} from '../utils/api'
               createCookies(signupDignupResponseData)
     }
     return (
-        <Box maw={320} mx="auto" mt='4'
+        <Container size={420} my={40}
         sx={(theme) => ({
             display: 'block',
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -145,7 +145,7 @@ import {CookieOptions} from '../utils/api'
             </Anchor>
           </Text>
         
-      </Box>
+      </Container>
     );
   }
   

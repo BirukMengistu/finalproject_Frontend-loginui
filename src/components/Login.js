@@ -20,7 +20,7 @@ import { Notifications }  from '@mantine/notifications'
 import {CookieOptions} from '../utils/api'
 export const Login = (props) => 
 {   const options = CookieOptions()
-  const [user, setUser]= useState('')
+    const [user, setUser]= useState('')
    
    const signIn = useSignIn() 
    const iSAuth = useIsAuthenticated()
@@ -47,6 +47,8 @@ export const Login = (props) =>
          
            Cookies.set(`userId`, data?.user._id.toString(), options)
            Cookies.set(`token`, data?.token, options)
+           Cookies.set('firstName',data?.user.firstName,options)
+           Cookies.set('lastName',data?.user.lastName,options)
            // eslint-disable-next-line no-lone-blocks
           if(data.statusCode === 200){
            Notifications.show({
@@ -125,7 +127,7 @@ export const Login = (props) =>
               login
             </Button>
             <Button variant="outline" onClick={() => form.reset()}>
-              Register
+              Reset
             </Button>
           </Group>
       </Paper>    
